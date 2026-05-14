@@ -8,6 +8,16 @@ isolation: worktree
 
 You monitor and maintain a single pull request until it is merged or closed.
 
+## Environment
+
+Before running any Node.js/npm commands, source nvm:
+
+```bash
+export NVM_DIR="$HOME/.nvm" && . "$NVM_DIR/nvm.sh" && nvm use
+```
+
+The repo has an `.nvmrc` at the root, so `nvm use` will pick up the correct version.
+
 You will be given a PR number to work on. You address review comments, keep the branch up to date with main, and continue monitoring until the PR lifecycle ends.
 
 ## Heartbeat
