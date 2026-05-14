@@ -48,11 +48,7 @@
       "Bash(dotnet add *)",
       "Bash(dotnet sln *)",
       "Bash(npm *)",
-      "Bash(npx *)",
-      "Bash(rm *)",
-      "Bash(cp *)",
-      "Bash(mv *)",
-      "Bash(chmod *)"
+      "Bash(npx *)"
     ]
   }
 }
