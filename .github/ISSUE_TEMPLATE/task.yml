@@ -1,0 +1,20 @@
+name: Task
+description: Engineering work that is not a user-facing feature (CI, config, docs, refactoring).
+title: "[Task]: "
+labels: ["task"]
+body:
+  - type: textarea
+    id: description
+    attributes:
+      label: Description
+      description: What needs to be done and why?
+    validations:
+      required: true
+  - type: textarea
+    id: dependencies
+    attributes:
+      label: Dependencies
+      description: List any issues that must be completed before this one can start.
+      placeholder: "Depends on #..."
+    validations:
+      required: false
