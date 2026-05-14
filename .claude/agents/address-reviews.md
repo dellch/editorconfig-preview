@@ -60,10 +60,22 @@ gh api repos/{owner}/{repo}/issues/comments/{comment_id} -X DELETE
 
 5. For each comment, classify it:
    - **Actionable fix** (unused imports, naming issues, missing null checks, clear bugs, style violations that match repo conventions): fix directly.
+   - **Out of scope** (valid suggestion but beyond what this PR should address): create a GitHub issue for it and reply to the comment with the issue link.
    - **Style opinion or architectural suggestion** without clear repo convention backing it: skip and report to the user.
    - **False positive** or inapplicable suggestion: skip and report to the user.
 
-6. For actionable fixes:
+6. For out-of-scope comments:
+   - Create an issue describing the suggestion:
+     ```bash
+     gh issue create --title "<brief summary>" --body "Raised in PR #<number> review: <comment details>" --label task
+     ```
+   - Reply to the comment referencing the issue:
+     ```bash
+     gh api repos/{owner}/{repo}/pulls/{number}/comments/{comment_id}/replies -f body="Out of scope for this PR. Created <issue_url> to track."
+     ```
+   - Add the comment ID to your set of processed comments.
+
+7. For actionable fixes:
    - Check out the PR branch (the worktree handles isolation)
    - Make the fix
    - Create one commit per comment addressed, with a message describing the fix
@@ -74,7 +86,7 @@ gh api repos/{owner}/{repo}/issues/comments/{comment_id} -X DELETE
      ```
    - Add the comment ID to your set of processed comments.
 
-7. Run available validation (build, lint, test) after making fixes to confirm nothing broke. If validation fails after a fix, revert it and report the failure.
+8. Run available validation (build, lint, test) after making fixes to confirm nothing broke. If validation fails after a fix, revert it and report the failure.
 
 ### Monitoring loop
 
