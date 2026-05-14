@@ -41,14 +41,14 @@ The repo has an `.nvmrc` at the root, so `nvm use` will pick up the correct vers
 
 4. Ensure you are in an isolated worktree. If you are already in one (check with `git worktree list`), rename the branch:
    ```bash
-   git branch -m {descriptive-branch-name}
+   git branch -m {number}-{descriptive-name}
    ```
    If you are not in a worktree, create one:
    ```bash
-   git worktree add ../{descriptive-branch-name} -b {descriptive-branch-name} origin/main
-   cd ../{descriptive-branch-name}
+   git worktree add ../issue-{number}-{descriptive-name} -b {number}-{descriptive-name} origin/main
+   cd ../issue-{number}-{descriptive-name}
    ```
-   Branch names must be descriptive and kebab-case.
+   Branch names must include the issue number prefix and be kebab-case (e.g., `7-add-frontend-test-infra`, `12-implement-format-endpoint`). This prevents collisions when multiple agents run in parallel.
 
 5. Implement the changes described in the issue:
    - Follow the conventions in CLAUDE.md (research-first, minimal, framework-native).
