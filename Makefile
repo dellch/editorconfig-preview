@@ -46,9 +46,9 @@ review-prs: ## Dispatch address-reviews agents for open PRs
 implement-issues: ## Dispatch agents for all open issues in the active milestone
 	./scripts/dispatch-issue-agents.sh "$(MILESTONE)"
 
-implement-issue: ## Dispatch an agent for a specific issue: make implement-issue ISSUE=7
+implement-issue: ## Dispatch an agent for a specific issue: make implement-issue ISSUE=7 [ALLOW=true]
 	@test -n "$(ISSUE)" || (echo "Usage: make implement-issue ISSUE=<number>" && exit 1)
-	claude --agent implement-issue --bg "Implement issue #$(ISSUE) in repository dellch/editorconfig-preview."
+	claude --agent implement-issue --bg $(if $(filter true,$(ALLOW)),--dangerously-skip-permissions) "Implement issue #$(ISSUE) in repository dellch/editorconfig-preview."
 
 list-issues: ## List open issues in the active milestone
 	@gh issue list --repo dellch/editorconfig-preview --milestone "$(MILESTONE)" --state open --json number,title,labels --template '{{range .}}#{{.number}}	{{.title}}	{{range .labels}}[{{.name}}] {{end}}{{"\n"}}{{end}}' | column -t -s '	'
