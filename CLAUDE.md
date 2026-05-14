@@ -15,39 +15,42 @@ The user edits an `.editorconfig` in the browser, clicks Format, and the backend
 
 ## Folder Structure
 
-```
+```text
 src/
 ├── backend/
-│   └── App.Api/
+│   └── EditorConfigPreview.Api/
 └── frontend/
 tests/
 └── backend/
-    └── App.Api.Tests/
+    ├── EditorConfigPreview.Api.UnitTests/
+    └── EditorConfigPreview.Api.IntegrationTests/
 ```
 
 ## Commands
 
-### Backend
+Use Makefile targets as the primary interface. Run `make help` to see all available targets.
 
-```sh
-cd src/backend/App.Api
-dotnet build
-dotnet run
+```bash
+make format          # Format all code (backend + frontend)
+make test            # Run all tests
+make mock            # Start mock API server from OpenAPI spec
+make review-prs      # Dispatch PR review agents
+make implement-issue ISSUE=N  # Dispatch agent for a specific issue
+make list-issues     # List open issues in active milestone
 ```
 
-### Frontend
+### Direct commands (when needed)
 
-```sh
+```bash
+# Backend
+cd src/backend/EditorConfigPreview.Api
+dotnet build
+dotnet run
+
+# Frontend
 cd src/frontend
 npm install
 npm run dev
-```
-
-### Tests
-
-```sh
-cd tests/backend/App.Api.Tests
-dotnet test
 ```
 
 ## Testing Strategy
@@ -75,15 +78,17 @@ dotnet test
 
 Use git worktrees for parallel work. Each feature or task should be developed in its own worktree so multiple Claude Code agents (or a developer and an agent) can work simultaneously without conflicts.
 
-```sh
-# Create a worktree for a new branch
-git worktree add ../editorconfig-preview-<branch-name> -b <branch-name>
+Worktrees go in `.claude/worktrees/` (already gitignored):
+
+```bash
+# Create a worktree for an issue
+git worktree add .claude/worktrees/{number}-{descriptive-name} -b {number}-{descriptive-name} origin/main
 
 # List active worktrees
 git worktree list
 
 # Remove a worktree after merging
-git worktree remove ../editorconfig-preview-<branch-name>
+git worktree remove .claude/worktrees/{number}-{descriptive-name}
 ```
 
 When using Claude Code's agent isolation (`isolation: "worktree"`), worktrees are managed automatically.
@@ -92,7 +97,7 @@ When using Claude Code's agent isolation (`isolation: "worktree"`), worktrees ar
 
 All work must be done on feature branches. Push branches to origin and create a pull request to integrate with `main`. Do not commit directly to `main`.
 
-Branch names must be short, descriptive, and use kebab-case (e.g., `scaffold-vue-frontend`, `add-format-endpoint`, `fix-cors-config`). Do not use auto-generated or opaque branch names.
+Branch names must be short, descriptive, and use kebab-case. When working on an issue, prefix with the issue number (e.g., `7-add-frontend-test-infra`, `12-implement-format-endpoint`). Do not use auto-generated or opaque branch names.
 
 ## Changelog
 
@@ -163,13 +168,21 @@ When adopting ecosystem conventions:
 
 ## Validation
 
-After making code or configuration changes, run the relevant checks that are available:
+After making code or configuration changes, run validation via Makefile targets:
 
-- `dotnet build` / `dotnet test` / `dotnet format --verify-no-changes`
-- `npm install` / `npm run lint` / `npm run type-check` / `npm run build`
+```bash
+make format   # Format all code — run before committing
+make test     # Run all tests
+```
+
+For more granular checks:
+
+- Backend: `dotnet build`, `dotnet test`, `dotnet format --verify-no-changes`
+- Frontend: `npm run lint`, `npm run type-check`, `npm run build`
 
 Requirements:
 
+- Always run `make format` before committing.
 - Report which validation commands were run and whether they passed.
 - Fix problems introduced by your own changes where practical.
 - State clearly when a command could not be run and why.
