@@ -92,6 +92,8 @@ When using Claude Code's agent isolation (`isolation: "worktree"`), worktrees ar
 
 All work must be done on feature branches. Push branches to origin and create a pull request to integrate with `main`. Do not commit directly to `main`.
 
+Branch names must be short, descriptive, and use kebab-case (e.g., `scaffold-vue-frontend`, `add-format-endpoint`, `fix-cors-config`). Do not use auto-generated or opaque branch names.
+
 ## Changelog
 
 This repository maintains a `CHANGELOG.md` in the repo root. When preparing a release, update it with a summary of changes included in that release. Follow [Keep a Changelog](https://keepachangelog.com/) format.
