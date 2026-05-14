@@ -10,6 +10,9 @@ obj/
 *.cache
 project.lock.json
 
+# Test results and coverage
+TestResults/
+
 # User secrets
 secrets.json
 
