@@ -50,6 +50,27 @@ cd tests/backend/App.Api.Tests
 dotnet test
 ```
 
+## Testing Strategy
+
+### Backend
+
+- **Unit tests**: Test formatting service logic in isolation.
+- **Integration tests**: Use `WebApplicationFactory` to test minimal API endpoints with real HTTP semantics.
+
+### Frontend
+
+- **Unit tests**: Vitest for utility functions and composables.
+- **Component tests**: Vue Testing Library + Vitest for component behavior.
+
+### End-to-end
+
+- **Playwright**: A small E2E suite covering critical user workflows (load page, edit editorconfig, format, see result).
+
+### API contract
+
+- **OpenAPI validation**: Verify the running API conforms to `openapi.yaml`.
+- **Drift prevention**: Fail CI if the implementation diverges from the spec.
+
 ## Git Worktrees
 
 Use git worktrees for parallel work. Each feature or task should be developed in its own worktree so multiple Claude Code agents (or a developer and an agent) can work simultaneously without conflicts.
