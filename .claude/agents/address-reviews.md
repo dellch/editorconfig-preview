@@ -6,9 +6,9 @@ model: sonnet
 isolation: worktree
 ---
 
-You monitor and address CodeRabbit review comments on a single pull request.
+You monitor and maintain a single pull request until it is merged or closed.
 
-You will be given a PR number to work on. After addressing existing comments, continue monitoring the PR every 5 minutes for new comments until the PR is merged or closed.
+You will be given a PR number to work on. You address review comments, keep the branch up to date with main, and continue monitoring until the PR lifecycle ends.
 
 ## Heartbeat
 
@@ -24,7 +24,7 @@ Store the comment URL/ID returned. Update this comment with a fresh timestamp on
 gh api repos/{owner}/{repo}/issues/comments/{comment_id} -X PATCH -f body="<!-- agent-heartbeat: $(date -u +%Y-%m-%dT%H:%M:%SZ) -->"
 ```
 
-When you stop monitoring (PR merged/closed or you finish), delete the heartbeat comment:
+When you stop monitoring (PR merged/closed), delete the heartbeat comment:
 
 ```bash
 gh api repos/{owner}/{repo}/issues/comments/{comment_id} -X DELETE
@@ -36,20 +36,22 @@ gh api repos/{owner}/{repo}/issues/comments/{comment_id} -X DELETE
 
 1. Fetch PR details and current review comments:
    ```bash
-   gh pr view {number} --json state,headRefName,title
+   gh pr view {number} --json state,headRefName,title,baseRefName
    gh api repos/{owner}/{repo}/pulls/{number}/comments
    ```
 
 2. Post the heartbeat comment (see above).
 
-3. Record all comment IDs from this fetch as your initial set of known comments.
+3. Check if the branch needs updating (see "Keeping the branch up to date" below).
 
-4. For each comment, classify it:
+4. Record all comment IDs from this fetch as your initial set of known comments.
+
+5. For each comment, classify it:
    - **Actionable fix** (unused imports, naming issues, missing null checks, clear bugs, style violations that match repo conventions): fix directly.
    - **Style opinion or architectural suggestion** without clear repo convention backing it: skip and report to the user.
    - **False positive** or inapplicable suggestion: skip and report to the user.
 
-5. For actionable fixes:
+6. For actionable fixes:
    - Check out the PR branch (the worktree handles isolation)
    - Make the fix
    - Create one commit per comment addressed, with a message describing the fix
@@ -60,7 +62,7 @@ gh api repos/{owner}/{repo}/issues/comments/{comment_id} -X DELETE
      ```
    - Add the comment ID to your set of processed comments.
 
-6. Run available validation (build, lint, test) after making fixes to confirm nothing broke. If validation fails after a fix, revert it and report the failure.
+7. Run available validation (build, lint, test) after making fixes to confirm nothing broke. If validation fails after a fix, revert it and report the failure.
 
 ### Monitoring loop
 
@@ -74,11 +76,43 @@ After the initial pass, repeat every 5 minutes:
 
 2. Update the heartbeat comment with the current timestamp.
 
-3. Fetch comments again. Compare against your set of known comment IDs. Only process comments with IDs not already in your set.
+3. Check if the branch needs updating against the base branch (see below).
 
-4. Address any new actionable comments using the same process above. Add each processed comment ID to your set.
+4. Fetch comments again. Compare against your set of known comment IDs. Only process comments with IDs not already in your set.
 
-5. Sleep 5 minutes, then repeat.
+5. Address any new actionable comments using the same process above. Add each processed comment ID to your set.
+
+6. Sleep 5 minutes, then repeat.
+
+## Keeping the branch up to date
+
+On each cycle, check if the PR branch is behind the base branch:
+
+```bash
+gh pr view {number} --json mergeStateStatus
+```
+
+If the merge state indicates the branch is behind or has conflicts:
+
+1. Fetch the latest from origin:
+   ```bash
+   git fetch origin
+   ```
+
+2. Attempt a rebase onto the base branch:
+   ```bash
+   git rebase origin/{baseRefName}
+   ```
+
+3. If the rebase succeeds cleanly, force-push the branch:
+   ```bash
+   git push --force-with-lease
+   ```
+
+4. If the rebase has conflicts, abort it and report the conflicts to the user. Do not attempt to resolve merge conflicts automatically.
+   ```bash
+   git rebase --abort
+   ```
 
 ## Rules
 
@@ -87,6 +121,7 @@ After the initial pass, repeat every 5 minutes:
 - Do not dismiss or resolve review comments on GitHub — let the reviewer verify.
 - Each fix should be its own commit with a descriptive message.
 - If validation fails after a fix, revert it and report the failure.
-- Stop monitoring when the PR state is `MERGED` or `CLOSED`.
+- Stop monitoring only when the PR state is `MERGED` or `CLOSED`. Do not stop because there is nothing to do — keep polling.
 - Track processed comment IDs to avoid duplicate fixes across polling cycles.
 - Always maintain the heartbeat comment while monitoring. Delete it when done.
+- Never resolve merge conflicts automatically — report them and wait for human intervention.
