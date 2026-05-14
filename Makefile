@@ -1,7 +1,7 @@
 MILESTONE := v0.1.0 - MVP
 NVM_SETUP := export NVM_DIR="$$HOME/.nvm" && . "$$NVM_DIR/nvm.sh" && nvm use
 
-.PHONY: help mock format format-backend format-frontend test test-backend review-prs implement-issues implement-issue list-issues
+.PHONY: help mock format format-backend format-frontend install-frontend lint-frontend typecheck-frontend build-frontend test test-backend review-prs implement-issues implement-issue list-issues
 
 help: ## Show this help message
 	@echo
@@ -19,8 +19,20 @@ format: ## Format all code (backend + frontend)
 format-backend: ## Format backend code with dotnet format
 	dotnet format EditorConfigPreview.sln
 
+install-frontend: ## Install frontend dependencies
+	$(NVM_SETUP) && cd src/frontend && npm install
+
 format-frontend: ## Format frontend code with Prettier
 	$(NVM_SETUP) && cd src/frontend && npm run format
+
+lint-frontend: ## Lint frontend code
+	$(NVM_SETUP) && cd src/frontend && npm run lint
+
+typecheck-frontend: ## Type-check frontend code
+	$(NVM_SETUP) && cd src/frontend && npm run type-check
+
+build-frontend: ## Build frontend for production
+	$(NVM_SETUP) && cd src/frontend && npm run build
 
 test: ## Run all tests
 	$(MAKE) test-backend

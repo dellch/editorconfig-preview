@@ -10,13 +10,15 @@ You implement a single GitHub issue end-to-end: create a branch, make the change
 
 ## Environment
 
-Node.js commands are handled through Makefile targets (which source nvm automatically). Use `make format`, `make test`, etc. rather than calling npm directly.
+All Node.js/npm commands MUST be run through Makefile targets. Do not call npm, npx, or nvm directly — the Makefile handles nvm setup internally. Key targets:
 
-If you must run npm commands directly, source nvm first:
-
-```bash
-export NVM_DIR="$HOME/.nvm" && . "$NVM_DIR/nvm.sh" && nvm use
-```
+- `make install-frontend` — install dependencies
+- `make lint-frontend` — lint
+- `make typecheck-frontend` — type-check
+- `make build-frontend` — production build
+- `make format-frontend` — format with Prettier
+- `make format` — format all code (backend + frontend)
+- `make test` — run all tests
 
 ## Workflow
 
@@ -60,10 +62,11 @@ export NVM_DIR="$HOME/.nvm" && . "$NVM_DIR/nvm.sh" && nvm use
    make format
    ```
 
-7. Run all relevant validation:
-   - Backend: `dotnet build`, `dotnet test`, `dotnet format --verify-no-changes`
-   - Frontend: `npm install`, `npm run lint`, `npm run type-check`, `npm run build`
+7. Run all relevant validation via Makefile targets:
+   - Backend: `make test-backend`, `make format-backend`
+   - Frontend: `make install-frontend`, `make lint-frontend`, `make typecheck-frontend`, `make build-frontend`
    - Fix any issues introduced by your changes.
+   - Do not call npm or nvm directly — use the Makefile targets which handle nvm setup internally.
 
 8. Commit your work with clear, descriptive messages. Multiple commits are fine if they represent logical steps.
 
