@@ -43,11 +43,11 @@ The repo has an `.nvmrc` at the root, so `nvm use` will pick up the correct vers
    ```bash
    git branch -m {number}-{descriptive-name}
    ```
-   If you are not in a worktree, create one:
+   If you are not in a worktree, create one and then work from that directory:
    ```bash
    git worktree add ../issue-{number}-{descriptive-name} -b {number}-{descriptive-name} origin/main
-   cd ../issue-{number}-{descriptive-name}
    ```
+   Then use absolute paths or set your working directory to the new worktree path for subsequent commands. Do not chain `cd` with git commands in a single shell invocation.
    Branch names must include the issue number prefix and be kebab-case (e.g., `7-add-frontend-test-infra`, `12-implement-format-endpoint`). This prevents collisions when multiple agents run in parallel.
 
 5. Implement the changes described in the issue:
