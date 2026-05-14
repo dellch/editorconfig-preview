@@ -1,6 +1,6 @@
 MILESTONE := v0.1.0 - MVP
 
-.PHONY: help mock format format-backend test-backend format-frontend review-prs implement-issues implement-issue list-issues
+.PHONY: help mock format format-backend format-frontend test test-backend review-prs implement-issues implement-issue list-issues
 
 help: ## Show this help message
 	@echo
@@ -17,6 +17,9 @@ format: ## Format all code (backend + frontend)
 
 format-backend: ## Format backend code with dotnet format
 	dotnet format EditorConfigPreview.sln
+
+test: ## Run all tests
+	$(MAKE) test-backend
 
 test-backend: ## Run backend tests with code coverage
 	dotnet test EditorConfigPreview.sln --collect:"XPlat Code Coverage"
