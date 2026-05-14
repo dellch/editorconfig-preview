@@ -2,11 +2,18 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddCors(options =>
 {
-    options.AddDefaultPolicy(policy =>
+    options.AddPolicy("Default", policy =>
     {
-        policy.AllowAnyOrigin()
-              .AllowAnyMethod()
-              .AllowAnyHeader();
+        if (builder.Environment.IsDevelopment())
+        {
+            policy.AllowAnyOrigin()
+                  .AllowAnyMethod()
+                  .AllowAnyHeader();
+        }
+        else
+        {
+            throw new InvalidOperationException("CORS policy must be configured for production.");
+        }
     });
 });
 
@@ -15,7 +22,7 @@ builder.Services.AddProblemDetails();
 
 var app = builder.Build();
 
-app.UseCors();
+app.UseCors("Default");
 
 if (app.Environment.IsDevelopment())
 {
