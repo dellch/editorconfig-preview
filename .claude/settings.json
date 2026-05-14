@@ -19,7 +19,14 @@
       "Bash(git push *)",
       "Bash(git add *)",
       "Bash(git commit *)",
-      "Bash(mkdir -p *)"
+      "Bash(mkdir -p *)",
+      "Bash(make *)",
+      "Bash(dotnet test *)",
+      "Bash(npm run type-check)",
+      "Bash(npm run format)",
+      "Bash(git branch *)",
+      "Bash(git worktree *)",
+      "Bash(git log *)"
     ]
   }
 }
