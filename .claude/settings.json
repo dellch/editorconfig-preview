@@ -1,8 +1,14 @@
 {
-  "mcpServers": {
-    "microsoft-learn": {
-      "type": "url",
-      "url": "https://learn.microsoft.com/api/mcp"
-    }
+  "permissions": {
+    "allow": [
+      "Bash(dotnet build)",
+      "Bash(dotnet run)",
+      "Bash(dotnet format)",
+      "Bash(npm install)",
+      "Bash(npm run dev)",
+      "Bash(npm run build)",
+      "Bash(npm run lint)",
+      "Bash(npx @playwright/mcp@latest*)"
+    ]
   }
 }
