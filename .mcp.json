@@ -11,8 +11,8 @@
     },
     "playwright": {
       "type": "stdio",
-      "command": "npx",
-      "args": ["@playwright/mcp@latest"]
+      "command": "/home/cdell/.nvm/versions/node/v24.15.0/bin/playwright-mcp",
+      "args": []
     },
     "context7": {
       "type": "http",

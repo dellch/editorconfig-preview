@@ -27,7 +27,11 @@
       "Bash(git branch *)",
       "Bash(git worktree *)",
       "Bash(git log *)",
-      "Bash(export NVM_DIR=\"$HOME/.nvm\" && . \"$NVM_DIR/nvm.sh\" && nvm use*)"
+      "Bash(export NVM_DIR=\"$HOME/.nvm\" && . \"$NVM_DIR/nvm.sh\" && nvm use*)",
+      "Bash(test *)",
+      "Bash(find *)",
+      "Bash(ls *)",
+      "Bash(cat *)"
     ]
   }
 }
