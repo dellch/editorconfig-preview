@@ -1,4 +1,10 @@
-.PHONY: mock format-backend test-backend format-frontend review-prs implement-issues implement-issue
+.PHONY: help mock format-backend test-backend format-frontend review-prs implement-issues implement-issue
+
+help: ## Show this help message
+	@echo
+	@echo "Available targets:"
+	@sed -n 's/^\([a-zA-Z_-]*\):.*##\s*\(.*\)/\1:\2/p' $(MAKEFILE_LIST) | column -t -s ':' | sed -e 's/^/  /'
+	@echo
 
 mock: ## Start mock API server from OpenAPI spec
 	npx @stoplight/prism-cli mock openapi.yaml
