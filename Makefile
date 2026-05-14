@@ -1,6 +1,6 @@
 MILESTONE := v0.1.0 - MVP
 
-.PHONY: help mock format-backend test-backend format-frontend review-prs implement-issues implement-issue list-issues
+.PHONY: help mock format format-backend test-backend format-frontend review-prs implement-issues implement-issue list-issues
 
 help: ## Show this help message
 	@echo
@@ -10,6 +10,10 @@ help: ## Show this help message
 
 mock: ## Start mock API server from OpenAPI spec
 	npx --yes @stoplight/prism-cli@5.15.10 mock openapi.yaml
+
+format: ## Format all code (backend + frontend)
+	$(MAKE) format-backend
+	$(MAKE) format-frontend
 
 format-backend: ## Format backend code with dotnet format
 	dotnet format EditorConfigPreview.sln

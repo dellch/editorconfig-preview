@@ -49,14 +49,19 @@ The repo has an `.nvmrc` at the root, so `nvm use` will pick up the correct vers
    - Keep changes focused on what the issue asks for — no scope creep.
    - If the issue has acceptance criteria, ensure each is met.
 
-6. Run all relevant validation:
+6. Before committing, always run formatting:
+   ```bash
+   make format
+   ```
+
+7. Run all relevant validation:
    - Backend: `dotnet build`, `dotnet test`, `dotnet format --verify-no-changes`
    - Frontend: `npm install`, `npm run lint`, `npm run type-check`, `npm run build`
    - Fix any issues introduced by your changes.
 
-7. Commit your work with clear, descriptive messages. Multiple commits are fine if they represent logical steps.
+8. Commit your work with clear, descriptive messages. Multiple commits are fine if they represent logical steps.
 
-8. Push the branch and open a PR:
+9. Push the branch and open a PR:
    ```bash
    git push -u origin {branch-name}
    gh pr create --title "{concise title}" --body "..." --milestone "{milestone title if set}"
@@ -66,12 +71,12 @@ The repo has an `.nvmrc` at the root, so `nvm use` will pick up the correct vers
    - `Closes #{number}` to auto-close the issue on merge
    - A test plan checklist
 
-9. After creating the PR, dispatch review agents:
+10. After creating the PR, dispatch review agents:
    ```bash
    make review-prs
    ```
 
-10. Report what was implemented, which validations passed, and the PR URL.
+11. Report what was implemented, which validations passed, and the PR URL.
 
 ## Rules
 
