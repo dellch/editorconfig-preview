@@ -36,6 +36,9 @@ dist/
 .DS_Store
 Thumbs.db
 
+# Claude Code worktrees
+.claude/worktrees/
+
 # Environment
 .env
 .env.*
