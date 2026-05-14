@@ -110,45 +110,48 @@ After the initial pass, repeat every 5 minutes:
 
 ## Keeping the branch up to date
 
-On each cycle, check if the PR branch is behind the base branch:
+On every cycle, always fetch and check if the branch is behind main using git directly (do not rely solely on the GitHub API merge status, which can be stale):
 
 ```bash
-gh pr view {number} --json mergeStateStatus
+git fetch origin
 ```
 
-If the merge state indicates the branch is behind or has conflicts:
+Check if there are commits on the base branch that aren't in the PR branch:
 
-1. Fetch the latest from origin:
-   ```bash
-   git fetch origin
-   ```
+```bash
+git log --oneline HEAD..origin/{baseRefName}
+```
 
-2. Attempt a rebase onto the base branch:
+If there are any commits (output is non-empty), the branch needs rebasing:
+
+1. Attempt a rebase onto the base branch:
    ```bash
    git rebase origin/{baseRefName}
    ```
 
-3. If the rebase succeeds cleanly, force-push the branch:
+2. If the rebase succeeds cleanly, force-push:
    ```bash
    git push --force-with-lease
    ```
 
-4. If the rebase has conflicts, abort the rebase and try a manual resolution approach:
-   ```bash
-   git rebase --abort
-   git rebase origin/{baseRefName}
-   ```
-   For each conflicting file, read the conflict markers, understand both sides, and resolve them. Prefer keeping both changes where possible. After resolving all conflicts in a file:
-   ```bash
-   git add <file>
-   git rebase --continue
-   ```
-   If a conflict is too complex to resolve confidently (e.g., both sides rewrote the same logic differently), abort and report to the user.
+3. If the rebase has conflicts, resolve them:
+   - For each conflicting file, read the conflict markers, understand both sides, and resolve them. Prefer keeping both changes where possible.
+   - After resolving all conflicts in a file:
+     ```bash
+     git add <file>
+     git rebase --continue
+     ```
+   - If a conflict is too complex to resolve confidently (e.g., both sides rewrote the same logic differently), abort and report to the user:
+     ```bash
+     git rebase --abort
+     ```
 
-5. After a successful rebase (with or without conflict resolution), force-push:
+4. After a successful rebase (with or without conflict resolution), force-push:
    ```bash
    git push --force-with-lease
    ```
+
+5. Run validation after rebasing to ensure nothing broke.
 
 ## Rules
 
