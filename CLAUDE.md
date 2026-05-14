@@ -8,7 +8,7 @@ EditorConfig Preview is a web app playground that lets users paste `.editorconfi
 
 ## Architecture
 
-- **Frontend**: Vue 3 + TypeScript (Vite). Scaffolded with `create-vue`; follows standard Vue project conventions.
+- **Frontend**: Vue 3 + TypeScript (Vite). Scaffolded with `create-vue`; follows standard Vue project conventions. Uses Tailwind CSS for styling.
 - **Backend**: .NET 10 minimal API.
 
 The user edits an `.editorconfig` in the browser, clicks Format, and the backend applies it to fixed sample C# code via `dotnet format`, returning the formatted result.
