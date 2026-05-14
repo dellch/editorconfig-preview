@@ -163,6 +163,10 @@ Keep repository documentation aligned with the actual developer workflow. When a
 
 Documentation should be concise, direct, and accurate. Remove stale content rather than leaving it alongside corrections.
 
+## API Conventions
+
+All API error responses must use the [RFC 7807 Problem Details](https://datatracker.ietf.org/doc/html/rfc7807) format. .NET's built-in Problem Details support should be used on the backend.
+
 ## Code and Configuration Quality
 
 - Clear naming and explicit intent over clever brevity.

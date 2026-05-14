@@ -1,0 +1,254 @@
+openapi: 3.0.3
+info:
+  title: EditorConfig Preview API
+  description: Applies .editorconfig rules to sample C# code using dotnet format.
+  version: 0.1.0
+
+servers:
+  - url: http://localhost:5000
+    description: Local development
+
+paths:
+  /api/health:
+    get:
+      operationId: getHealth
+      summary: Check API health
+      description: Confirms the API is running and dotnet format is available.
+      responses:
+        "200":
+          description: Healthy
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HealthResponse"
+              example:
+                status: healthy
+        "503":
+          description: Unhealthy
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/ProblemDetails"
+              example:
+                type: https://tools.ietf.org/html/rfc7807
+                title: Service Unavailable
+                status: 503
+                detail: dotnet format is not available
+
+  /api/sample:
+    get:
+      operationId: getSample
+      summary: Get the sample C# code
+      description: Returns the fixed C# sample that editorconfig rules are applied to.
+      responses:
+        "200":
+          description: The sample code
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SampleResponse"
+              example:
+                fileName: Sample.cs
+                content: |
+                  using System;
+                  using System.Collections.Generic;
+                  using System.Linq;
+
+                  namespace EditorConfigPreview.Sample
+                  {
+                      public class OrderProcessor
+                      {
+                          private const string default_status = "pending";
+                          private static readonly List<string> validStatuses = new List<string> { "pending", "processing", "complete" };
+                          private string _currentStatus;
+
+                          public OrderProcessor()
+                          {
+                              _currentStatus = default_status;
+                          }
+
+                          public string GetStatus() { return _currentStatus; }
+
+                          public void ProcessOrder(int orderId)
+                          {
+                              if (orderId <= 0)
+                                  throw new ArgumentException("Invalid order ID");
+
+                              var items = GetItems(orderId);
+                              if (items.Any())
+                              {
+                                  foreach(var item in items)
+                                  {
+                                      Console.WriteLine($"Processing {item}");
+                                  }
+                                  _currentStatus = "complete";
+                              }
+                          }
+
+                          private List<string> GetItems(int orderId)
+                          {
+                              return new List<string> { "item1", "item2" };
+                          }
+                      }
+                  }
+
+  /api/format:
+    post:
+      operationId: formatCode
+      summary: Apply editorconfig to sample code
+      description: Applies the provided .editorconfig content to the sample C# code using dotnet format and returns the formatted result.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/FormatRequest"
+            example:
+              editorConfig: |
+                root = true
+
+                [*.cs]
+                indent_style = space
+                indent_size = 2
+                dotnet_naming_rule.constant_fields_should_be_pascal_case.severity = warning
+                dotnet_naming_rule.constant_fields_should_be_pascal_case.symbols = constant_fields
+                dotnet_naming_rule.constant_fields_should_be_pascal_case.style = pascal_case_style
+                dotnet_naming_symbols.constant_fields.applicable_kinds = field
+                dotnet_naming_symbols.constant_fields.required_modifiers = const
+                dotnet_naming_style.pascal_case_style.capitalization = pascal_case
+      responses:
+        "200":
+          description: Formatted code
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FormatResponse"
+              example:
+                formattedContent: |
+                  using System;
+                  using System.Collections.Generic;
+                  using System.Linq;
+
+                  namespace EditorConfigPreview.Sample
+                  {
+                    public class OrderProcessor
+                    {
+                      private const string DefaultStatus = "pending";
+                      private static readonly List<string> validStatuses = new List<string> { "pending", "processing", "complete" };
+                      private string _currentStatus;
+
+                      public OrderProcessor()
+                      {
+                        _currentStatus = DefaultStatus;
+                      }
+
+                      public string GetStatus() { return _currentStatus; }
+
+                      public void ProcessOrder(int orderId)
+                      {
+                        if (orderId <= 0)
+                          throw new ArgumentException("Invalid order ID");
+
+                        var items = GetItems(orderId);
+                        if (items.Any())
+                        {
+                          foreach (var item in items)
+                          {
+                            Console.WriteLine($"Processing {item}");
+                          }
+                          _currentStatus = "complete";
+                        }
+                      }
+
+                      private List<string> GetItems(int orderId)
+                      {
+                        return new List<string> { "item1", "item2" };
+                      }
+                    }
+                  }
+        "400":
+          description: Invalid request
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/ProblemDetails"
+              example:
+                type: https://tools.ietf.org/html/rfc7807
+                title: Bad Request
+                status: 400
+                detail: The editorConfig field is required.
+        "422":
+          description: Format failed
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/ProblemDetails"
+              example:
+                type: https://tools.ietf.org/html/rfc7807
+                title: Format Failed
+                status: 422
+                detail: "dotnet format exited with code 1: unexpected token at line 3"
+
+components:
+  schemas:
+    HealthResponse:
+      type: object
+      required:
+        - status
+      properties:
+        status:
+          type: string
+          enum:
+            - healthy
+
+    SampleResponse:
+      type: object
+      required:
+        - fileName
+        - content
+      properties:
+        fileName:
+          type: string
+          description: Display name for the sample file.
+        content:
+          type: string
+          description: The raw C# source code.
+
+    FormatRequest:
+      type: object
+      required:
+        - editorConfig
+      properties:
+        editorConfig:
+          type: string
+          description: The full contents of an .editorconfig file.
+
+    FormatResponse:
+      type: object
+      required:
+        - formattedContent
+      properties:
+        formattedContent:
+          type: string
+          description: The C# code after dotnet format has applied the editorconfig rules.
+
+    ProblemDetails:
+      type: object
+      description: RFC 7807 Problem Details response.
+      required:
+        - type
+        - title
+        - status
+      properties:
+        type:
+          type: string
+          format: uri
+        title:
+          type: string
+        status:
+          type: integer
+        detail:
+          type: string
+        instance:
+          type: string
+          format: uri
