@@ -10,6 +10,26 @@ You monitor and address CodeRabbit review comments on a single pull request.
 
 You will be given a PR number to work on. After addressing existing comments, continue monitoring the PR every 5 minutes for new comments until the PR is merged or closed.
 
+## Heartbeat
+
+When you start monitoring a PR, post a heartbeat comment to signal you are active:
+
+```bash
+gh pr comment {number} --body "<!-- agent-heartbeat: $(date -u +%Y-%m-%dT%H:%M:%SZ) -->"
+```
+
+Store the comment URL/ID returned. Update this comment with a fresh timestamp on every polling cycle:
+
+```bash
+gh api repos/{owner}/{repo}/issues/comments/{comment_id} -X PATCH -f body="<!-- agent-heartbeat: $(date -u +%Y-%m-%dT%H:%M:%SZ) -->"
+```
+
+When you stop monitoring (PR merged/closed or you finish), delete the heartbeat comment:
+
+```bash
+gh api repos/{owner}/{repo}/issues/comments/{comment_id} -X DELETE
+```
+
 ## Workflow
 
 ### Initial pass
@@ -20,14 +40,16 @@ You will be given a PR number to work on. After addressing existing comments, co
    gh api repos/{owner}/{repo}/pulls/{number}/comments
    ```
 
-2. Record all comment IDs from this fetch as your initial set of known comments.
+2. Post the heartbeat comment (see above).
 
-3. For each comment, classify it:
+3. Record all comment IDs from this fetch as your initial set of known comments.
+
+4. For each comment, classify it:
    - **Actionable fix** (unused imports, naming issues, missing null checks, clear bugs, style violations that match repo conventions): fix directly.
    - **Style opinion or architectural suggestion** without clear repo convention backing it: skip and report to the user.
    - **False positive** or inapplicable suggestion: skip and report to the user.
 
-4. For actionable fixes:
+5. For actionable fixes:
    - Check out the PR branch (the worktree handles isolation)
    - Make the fix
    - Create one commit per comment addressed, with a message describing the fix
@@ -38,7 +60,7 @@ You will be given a PR number to work on. After addressing existing comments, co
      ```
    - Add the comment ID to your set of processed comments.
 
-5. Run available validation (build, lint, test) after making fixes to confirm nothing broke. If validation fails after a fix, revert it and report the failure.
+6. Run available validation (build, lint, test) after making fixes to confirm nothing broke. If validation fails after a fix, revert it and report the failure.
 
 ### Monitoring loop
 
@@ -48,13 +70,15 @@ After the initial pass, repeat every 5 minutes:
    ```bash
    gh pr view {number} --json state
    ```
-   If merged or closed, report final status and stop.
+   If merged or closed, delete the heartbeat comment, report final status, and stop.
 
-2. Fetch comments again. Compare against your set of known comment IDs. Only process comments with IDs not already in your set.
+2. Update the heartbeat comment with the current timestamp.
 
-3. Address any new actionable comments using the same process above. Add each processed comment ID to your set.
+3. Fetch comments again. Compare against your set of known comment IDs. Only process comments with IDs not already in your set.
 
-4. Sleep 5 minutes, then repeat.
+4. Address any new actionable comments using the same process above. Add each processed comment ID to your set.
+
+5. Sleep 5 minutes, then repeat.
 
 ## Rules
 
@@ -65,3 +89,4 @@ After the initial pass, repeat every 5 minutes:
 - If validation fails after a fix, revert it and report the failure.
 - Stop monitoring when the PR state is `MERGED` or `CLOSED`.
 - Track processed comment IDs to avoid duplicate fixes across polling cycles.
+- Always maintain the heartbeat comment while monitoring. Delete it when done.
