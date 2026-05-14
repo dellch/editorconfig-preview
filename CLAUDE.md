@@ -106,3 +106,68 @@ Four MCP servers are configured in `.mcp.json` (project-scoped, shared with the 
 ### Verifying
 
 Restart your Claude Code session after changes to `.mcp.json`, then run `/mcp` to confirm all servers connect.
+
+## Technical Decision-Making
+
+### Research first
+
+Before making decisions about framework setup, package configuration, project structure, testing, build tooling, or security-sensitive implementation, consult current authoritative documentation. Do not rely solely on training data for tooling defaults, APIs, or best practices.
+
+Prefer sources in this order:
+
+1. Official product/framework documentation
+2. Official GitHub repositories or organization-maintained config packages
+3. Release notes and migration guides from the maintainer
+4. High-quality secondary sources only when primary sources are insufficient
+
+Use available MCP servers (Microsoft Learn, NuGet, Context7) and web fetch to verify current behavior rather than assuming.
+
+### Prefer official baselines over copied config
+
+When adopting ecosystem conventions:
+
+- Use official presets, recommended scaffolding, or documented configuration paths when available.
+- Do not copy configuration from a framework's own monorepo unless it is clearly appropriate for an application repo.
+- When borrowing from an upstream project, distinguish between general ecosystem guidance and configuration specific to maintaining that upstream project itself.
+
+### Keep changes minimal and intentional
+
+- Start with the smallest setup that satisfies the request.
+- Do not add libraries, abstractions, folder structures, or custom configuration without a clear reason.
+- Do not build speculative architecture for features that do not exist yet.
+- Prefer conventions that are easy for future contributors to understand.
+- When making non-obvious choices, briefly state the rationale in the summary or a short inline comment.
+
+## Validation
+
+After making code or configuration changes, run the relevant checks that are available:
+
+- `dotnet build` / `dotnet test` / `dotnet format --verify-no-changes`
+- `npm install` / `npm run lint` / `npm run type-check` / `npm run build`
+
+Requirements:
+
+- Report which validation commands were run and whether they passed.
+- Fix problems introduced by your own changes where practical.
+- State clearly when a command could not be run and why.
+
+## Documentation
+
+Keep repository documentation aligned with the actual developer workflow. When adding tooling, scripts, or setup conventions, update the relevant docs (README or CLAUDE.md) with:
+
+- Prerequisites
+- Install/setup commands
+- Local development commands
+- Lint/format/type-check/test/build commands
+- Any unusual decisions contributors need to know
+
+Documentation should be concise, direct, and accurate. Remove stale content rather than leaving it alongside corrections.
+
+## Code and Configuration Quality
+
+- Clear naming and explicit intent over clever brevity.
+- Framework-native patterns over custom abstractions.
+- Consistency across files — do not mix competing conventions.
+- Enforceable conventions (linters, formatters, CI checks) over honor-system rules.
+- No dead configuration, stale comments, or duplicated settings.
+- Do not silently introduce conflicting conventions.
