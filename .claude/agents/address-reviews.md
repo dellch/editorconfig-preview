@@ -109,9 +109,21 @@ If the merge state indicates the branch is behind or has conflicts:
    git push --force-with-lease
    ```
 
-4. If the rebase has conflicts, abort it and report the conflicts to the user. Do not attempt to resolve merge conflicts automatically.
+4. If the rebase has conflicts, abort the rebase and try a manual resolution approach:
    ```bash
    git rebase --abort
+   git rebase origin/{baseRefName}
+   ```
+   For each conflicting file, read the conflict markers, understand both sides, and resolve them. Prefer keeping both changes where possible. After resolving all conflicts in a file:
+   ```bash
+   git add <file>
+   git rebase --continue
+   ```
+   If a conflict is too complex to resolve confidently (e.g., both sides rewrote the same logic differently), abort and report to the user.
+
+5. After a successful rebase (with or without conflict resolution), force-push:
+   ```bash
+   git push --force-with-lease
    ```
 
 ## Rules
@@ -124,4 +136,4 @@ If the merge state indicates the branch is behind or has conflicts:
 - Stop monitoring only when the PR state is `MERGED` or `CLOSED`. Do not stop because there is nothing to do — keep polling.
 - Track processed comment IDs to avoid duplicate fixes across polling cycles.
 - Always maintain the heartbeat comment while monitoring. Delete it when done.
-- Never resolve merge conflicts automatically — report them and wait for human intervention.
+- Resolve merge conflicts where the resolution is clear. Only report to the user when both sides rewrote the same logic and the correct resolution is ambiguous.
