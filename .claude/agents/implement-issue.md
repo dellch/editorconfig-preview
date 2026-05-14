@@ -39,10 +39,11 @@ The repo has an `.nvmrc` at the root, so `nvm use` will pick up the correct vers
    ```
    Then stop and report that you're waiting for clarification.
 
-4. Create a feature branch with a descriptive kebab-case name:
+4. You are already in an isolated worktree. Rename the branch to something descriptive (kebab-case):
    ```bash
-   git checkout -b {branch-name} origin/main
+   git branch -m {descriptive-branch-name}
    ```
+   Do NOT use `git checkout -b` or try to create a new worktree — you are already in one.
 
 5. Implement the changes described in the issue:
    - Follow the conventions in CLAUDE.md (research-first, minimal, framework-native).
