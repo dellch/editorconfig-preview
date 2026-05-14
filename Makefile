@@ -9,7 +9,7 @@ help: ## Show this help message
 	@echo
 
 mock: ## Start mock API server from OpenAPI spec
-	npx @stoplight/prism-cli mock openapi.yaml
+	npx --yes @stoplight/prism-cli@5.15.10 mock openapi.yaml
 
 format-backend: ## Format backend code with dotnet format
 	dotnet format EditorConfigPreview.sln
