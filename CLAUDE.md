@@ -92,6 +92,8 @@ When using Claude Code's agent isolation (`isolation: "worktree"`), worktrees ar
 
 All work must be done on feature branches. Push branches to origin and create a pull request to integrate with `main`. Do not commit directly to `main`.
 
+Branch names must be short, descriptive, and use kebab-case (e.g., `scaffold-vue-frontend`, `add-format-endpoint`, `fix-cors-config`). Do not use auto-generated or opaque branch names.
+
 ## Changelog
 
 This repository maintains a `CHANGELOG.md` in the repo root. When preparing a release, update it with a summary of changes included in that release. Follow [Keep a Changelog](https://keepachangelog.com/) format.
@@ -183,6 +185,10 @@ Keep repository documentation aligned with the actual developer workflow. When a
 - Any unusual decisions contributors need to know
 
 Documentation should be concise, direct, and accurate. Remove stale content rather than leaving it alongside corrections.
+
+## Documentation Guidance
+
+All fenced code blocks in markdown files must specify a language (e.g., `bash`, `json`, `csharp`, `text`). Do not leave code fences unlabeled.
 
 ## API Conventions
 
