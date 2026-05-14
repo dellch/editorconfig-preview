@@ -1,4 +1,5 @@
 MILESTONE := v0.1.0 - MVP
+NVM_SETUP := export NVM_DIR="$$HOME/.nvm" && . "$$NVM_DIR/nvm.sh" && nvm use
 
 .PHONY: help mock format format-backend format-frontend test test-backend review-prs implement-issues implement-issue list-issues
 
@@ -9,7 +10,7 @@ help: ## Show this help message
 	@echo
 
 mock: ## Start mock API server from OpenAPI spec
-	npx --yes @stoplight/prism-cli@5.15.10 mock openapi.yaml
+	$(NVM_SETUP) && npx --yes @stoplight/prism-cli@5.15.10 mock openapi.yaml
 
 format: ## Format all code (backend + frontend)
 	$(MAKE) format-backend
@@ -18,14 +19,14 @@ format: ## Format all code (backend + frontend)
 format-backend: ## Format backend code with dotnet format
 	dotnet format EditorConfigPreview.sln
 
+format-frontend: ## Format frontend code with Prettier
+	$(NVM_SETUP) && cd src/frontend && npm run format
+
 test: ## Run all tests
 	$(MAKE) test-backend
 
 test-backend: ## Run backend tests with code coverage
 	dotnet test EditorConfigPreview.sln --collect:"XPlat Code Coverage"
-
-format-frontend: ## Format frontend code with Prettier
-	cd src/frontend && npm run format
 
 review-prs: ## Dispatch address-reviews agents for open PRs
 	./scripts/dispatch-pr-agents.sh

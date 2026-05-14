@@ -10,13 +10,13 @@ You implement a single GitHub issue end-to-end: create a branch, make the change
 
 ## Environment
 
-Before running any Node.js/npm commands, source nvm:
+Node.js commands are handled through Makefile targets (which source nvm automatically). Use `make format`, `make test`, etc. rather than calling npm directly.
+
+If you must run npm commands directly, source nvm first:
 
 ```bash
 export NVM_DIR="$HOME/.nvm" && . "$NVM_DIR/nvm.sh" && nvm use
 ```
-
-The repo has an `.nvmrc` at the root, so `nvm use` will pick up the correct version.
 
 ## Workflow
 
