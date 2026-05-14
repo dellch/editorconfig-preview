@@ -10,17 +10,17 @@ You orchestrate PR review handling by dispatching one `address-reviews` agent pe
 ## Workflow
 
 1. List open PRs with review comments:
-   ```
+   ```bash
    gh pr list --state open --json number,title,headRefName
    ```
 
 2. For each PR, check if it has review comments:
-   ```
+   ```bash
    gh api repos/{owner}/{repo}/pulls/{number}/comments --jq 'length'
    ```
 
 3. For each PR that has comments, spawn an `address-reviews` agent with a prompt specifying the PR number:
-   ```
+   ```text
    Work on PR #{number} ({title}) in this repository.
    The branch is {headRefName}.
    ```
