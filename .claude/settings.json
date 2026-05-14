@@ -31,7 +31,28 @@
       "Bash(test *)",
       "Bash(find *)",
       "Bash(ls *)",
-      "Bash(cat *)"
+      "Bash(cat *)",
+      "Bash(pwd)",
+      "Bash(which *)",
+      "Bash(echo *)",
+      "Bash(head *)",
+      "Bash(tail *)",
+      "Bash(grep *)",
+      "Bash(wc *)",
+      "Bash(git status*)",
+      "Bash(git diff*)",
+      "Bash(git remote *)",
+      "Bash(git stash*)",
+      "Bash(dotnet restore*)",
+      "Bash(dotnet new *)",
+      "Bash(dotnet add *)",
+      "Bash(dotnet sln *)",
+      "Bash(npm *)",
+      "Bash(npx *)",
+      "Bash(rm *)",
+      "Bash(cp *)",
+      "Bash(mv *)",
+      "Bash(chmod *)"
     ]
   }
 }
