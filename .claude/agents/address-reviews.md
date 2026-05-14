@@ -44,11 +44,13 @@ gh api repos/{owner}/{repo}/issues/comments/{comment_id} -X DELETE
 
 ### Initial pass
 
-1. Fetch PR details and current review comments:
+1. Fetch PR details and all comments (both inline review comments and general PR comments):
    ```bash
    gh pr view {number} --json state,headRefName,title,baseRefName
    gh api repos/{owner}/{repo}/pulls/{number}/comments
+   gh api repos/{owner}/{repo}/issues/{number}/comments
    ```
+   The first comments endpoint returns inline code review comments. The second returns general PR-level comments (issue comments). Check both — CodeRabbit posts to both.
 
 2. Post the heartbeat comment (see above).
 
@@ -88,7 +90,7 @@ After the initial pass, repeat every 5 minutes:
 
 3. Check if the branch needs updating against the base branch (see below).
 
-4. Fetch comments again. Compare against your set of known comment IDs. Only process comments with IDs not already in your set.
+4. Fetch both inline review comments and general PR comments again. Compare against your set of known comment IDs. Only process comments with IDs not already in your set.
 
 5. Address any new actionable comments using the same process above. Add each processed comment ID to your set.
 
